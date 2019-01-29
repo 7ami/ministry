@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block breadcrumb %}
+    <li class="breadcrumb-item active">Volunteers</li>
+{% endblock %}
+
+{% block content %}
+    <table class="table">
+        <thead class="thead-inverse">
+            <tr>
+                <th>Citizenship Number</th>
+                <th>First Name</th>
+                <th>Last Name</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Contact Number</th>
+                <th>Address</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for volunteer in volunteers %}
+                <tr>
+                    <td class="align-middle">{{ volunteer.citizenship_Number }}</td>
+                    <td class="align-middle">{{ volunteer.first_name }}</td>
+                    <td class="align-middle">{{ volunteer.last_name }}</td>
+                    <td class="align-middle">{{ volunteer.username }}</td>
+                    <td class="align-middle">{{ volunteer.email }}</td>
+                    <td class="align-middle">{{ volunteer.contact_Number }}</td>
+                    <td class="align-middle">{{ volunteer.address }}</td>
+{#                        <a href="#">{{volunteer.enrolled_Organization}}</a>#}
+{#                        <small class="text-muted d-block">{{volunteer.address}}</small>#}
+{#                    <td class="align-middle">0</td>#}
+{#                    <td class="align-middle">0</td>#}
+{#                    <td></td>#}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
