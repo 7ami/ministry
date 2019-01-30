@@ -1,4 +1,5 @@
 {% extends 'base_accounts.html' %}
+{% load crispy_forms_tags %}
 
 {% block title %}Raahat - Register{% endblock %}
 
@@ -10,8 +11,9 @@
                     <h3 class="card-title">Create Relief-Operation</h3>
                     <form method="post" novalidate>
                         {% csrf_token %}
-                        {% include 'includes/forms.html' %}
-                        <button type="submit" class="btn btn-primary btn-group">Create</button>
+                        {% crispy form %}
+{#                        {% include 'includes/forms.html' %}#}
+{#                        <button type="submit" class="btn btn-primary">Create</button>#}
                     </form>
                 </div>
 {#                <div class="card-footer text-muted text-center">#}

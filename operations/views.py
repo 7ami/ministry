@@ -20,7 +20,7 @@ def test(request):
 
 # Trying but is of no use right now
 @login_required(login_url='login')
-@check_permission(profiletype='AdminUser')
+@check_permission(profiletype='OrganizationUser')
 def createOperation(request):
     if request.method == 'POST':
         form = OperationCreationForm(request.POST)

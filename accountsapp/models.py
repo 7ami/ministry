@@ -50,7 +50,7 @@ class VolunteerUser(BaseUser):
     contact_Number = models.BigIntegerField(verbose_name='Contact Number')
     address = models.CharField(max_length=255)
     enrolled_Organization = models.ForeignKey(OrganizationUser, on_delete=models.CASCADE, to_field='organization_Name',
-                                              related_name='volunteers', blank=True)
+                                              related_name='volunteers', null=True, blank=True)
 
     class Meta:
         verbose_name = 'Volunteer'

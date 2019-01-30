@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'operations.apps.OperationsConfig',
     'accountsapp.apps.AccountsappConfig',
-
+    'crispy_forms',
     'widget_tweaks',
 ]
 
@@ -103,6 +103,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = (
+    'accountsapp.auth.CustomBackend',
+)
+
 AUTH_USER_MODEL = 'accountsapp.BaseUser'
 
 LOGOUT_REDIRECT_URL = 'home'
@@ -131,3 +135,5 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'
