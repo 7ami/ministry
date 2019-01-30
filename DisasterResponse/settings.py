@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'operations.apps.OperationsConfig',
+    'accountsapp.apps.AccountsappConfig',
 
     'widget_tweaks',
 ]
@@ -102,7 +103,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-AUTH_USER_MODEL = 'operations.Volunteer'
+AUTH_USER_MODEL = 'accountsapp.BaseUser'
 
 LOGOUT_REDIRECT_URL = 'home'
 

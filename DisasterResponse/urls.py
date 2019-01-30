@@ -19,12 +19,14 @@ from django.contrib.auth import views as authViews
 
 
 from operations import views as operationViews
+from accountsapp import views as accountsViews
 
 
 urlpatterns = [
     path('', operationViews.home, name='home'),
-    path('test/', operationViews.test, name='test'),  # No use, just casual testing, will be removed later
-    path('signup/', operationViews.signup, name='signup'),
+    path('operations/create/', operationViews.createOperation, name='create_operations'),
+    path('signup/volunteer/', accountsViews.volunteer_signup, name='volunteer_signup'),
+    path('signup/organization/', accountsViews.organization_signup, name='organization_signup'),
     path('login/', authViews.LoginView.as_view(), name='login'),
     path('logout/', authViews.LogoutView.as_view(), name='logout'),
     path('admin/', admin.site.urls),

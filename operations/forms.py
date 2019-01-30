@@ -1,46 +1,21 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+# from django.contrib.auth.forms import UserCreationForm
 # from django.contrib.auth.models import User
 
+from .models import Operation, Task
 
-from .models import Volunteer
 
+class OperationCreationForm(forms.ModelForm):
 
-class VolunteerSignUpForm(UserCreationForm):
-
-    citizenship_Number = forms.CharField(
-        widget=forms.TextInput(),
-        max_length=15
+    tasks = forms.ModelMultipleChoiceField(
+        widget=forms.CheckboxSelectMultiple,
+        queryset=Task.objects.all(),
+        required=True
     )
 
-    contact_Number = forms.IntegerField(
-        widget=forms.NumberInput()
-    )
-
-    address = forms.CharField(
-        widget=forms.TextInput(),
-        max_length=255
-    )
-
-    email = forms.CharField(
-        max_length=255,
-        required=True,
-        widget=forms.EmailInput()
-    )
-
-    enrolled_Organization = forms.CharField(
-        widget=forms.TextInput(),
-        max_length=255
-    )
+    # volunteer = forms.CheckboxSelectMultiple()
 
     class Meta:
-        model = Volunteer
-        fields = ['first_name', 'last_name', 'username', 'password1', 'password2', 'email', 'citizenship_Number',
-                  'contact_Number', 'address', 'enrolled_Organization']
-
-
-class LoginForm(UserCreationForm):
-
-    class Meta:
-        model = Volunteer
-        fields = ['username']
+        model = Operation
+        fields = ['operationName', 'location', 'urgencyLevel', 'volunteersRequired', 'volunteersAssigned', 'tasks',
+                  'volunteer', 'organization']

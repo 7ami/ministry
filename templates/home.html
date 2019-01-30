@@ -6,13 +6,14 @@
 
 {% block content %}
     <table class="table">
-        <thead class="thead-inverse">
+        <thead class="thead-dark">
             <tr>
                 <th>Citizenship Number</th>
                 <th>First Name</th>
                 <th>Last Name</th>
                 <th>Username</th>
                 <th>Email</th>
+                <th>Enrolled Organization</th>
                 <th>Contact Number</th>
                 <th>Address</th>
             </tr>
@@ -26,6 +27,7 @@
                     <td class="align-middle">{{ volunteer.last_name }}</td>
                     <td class="align-middle">{{ volunteer.username }}</td>
                     <td class="align-middle">{{ volunteer.email }}</td>
+                    <td class="align-middle">{{ volunteer.enrolled_Organization }}</td>
                     <td class="align-middle">{{ volunteer.contact_Number }}</td>
                     <td class="align-middle">{{ volunteer.address }}</td>
 {#                        <a href="#">{{volunteer.enrolled_Organization}}</a>#}

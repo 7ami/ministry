@@ -1,43 +1,51 @@
-from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.contrib import admin
+from django.forms import CheckboxSelectMultiple
 
-
-class Organization(models.Model):
-    organizationName = models.CharField(max_length=30, unique=True)
-    organizationContactNo = models.BigIntegerField()
-    organizationAddress = models.CharField(max_length=255)
+from accountsapp.models import *
 
 
 class UrgencyLevel(models.Model):
     urgency = models.CharField(max_length=50, unique=True)
 
+    def __str__(self):
+        return self.urgency
 
-class VolunteerRequired(models.Model):
-    requiredNumber = models.IntegerField()
 
-
-class VolunteerAssigned(models.Model):
-    assignedNumber = models.IntegerField()
+# class VolunteerRequired(models.Model):
+#     requiredNumber = models.IntegerField()
+#
+#
+# class VolunteerAssigned(models.Model):
+#     assignedNumber = models.IntegerField()
 
 
 class Task(models.Model):
     task = models.CharField(max_length=30, unique=True)
     description = models.CharField(max_length=255)
 
-
-class Volunteer(AbstractUser):
-    citizenship_Number = models.BigIntegerField()
-    contact_Number = models.BigIntegerField()
-    address = models.CharField(max_length=255)
-    # enrolled_Organization = models.ForeignKey(Organization, on_delete=models.CASCADE, related_name='volunteers', blank=True)
+    def __str__(self):
+        return self.task
 
 
 class Operation(models.Model):
-    operationName = models.CharField(max_length=30, unique=True)
+
+    operationName = models.CharField(max_length=30, unique=True, verbose_name='Operation Name')
     location = models.CharField(max_length=255, unique=True)
-    urgencyLevel = models.ForeignKey(UrgencyLevel, on_delete=models.CASCADE, related_name='+')
-    volunteersAssigned = models.OneToOneField(VolunteerAssigned, on_delete=models.CASCADE, related_name='operations')
-    volunteersRequired = models.OneToOneField(VolunteerRequired, on_delete=models.CASCADE, related_name='operations')
-    volunteer = models.ManyToManyField(Volunteer, related_name='operations')
-    task = models.ForeignKey(Task, on_delete=models.CASCADE, related_name='+')
-    organization = models.ManyToManyField(Organization, related_name='operations')
+    urgencyLevel = models.ForeignKey(UrgencyLevel, on_delete=models.CASCADE, related_name='+',
+                                     verbose_name='Urgency Level')
+    volunteersAssigned = models.IntegerField(verbose_name='Total Volunteers in the area', default=0)
+    volunteersRequired = models.IntegerField(verbose_name='Estimated number of required volunteers')
+    volunteer = models.ManyToManyField(VolunteerUser, related_name='operations')
+    tasks = models.ManyToManyField(Task, related_name='+')
+    organization = models.ManyToManyField(OrganizationUser, related_name='operations')
+
+    def __str__(self):
+        return self.operationName
+
+
+class Admin(admin.ModelAdmin):
+
+    formfield_overrides = {
+        models.ManyToManyField: {'widget': CheckboxSelectMultiple},
+    }

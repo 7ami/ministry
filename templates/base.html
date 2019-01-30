@@ -3,8 +3,9 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>{% block title %}Disaster Response{% endblock %}</title>
-        <link href="https://fonts.googleapis.com/css?family=Peralta" rel="stylesheet">
+        <title>{% block title %}राहत{% endblock %}</title>
+{#        <link href="https://fonts.googleapis.com/css?family=Peralta" rel="stylesheet">#}
+        <link href="https://fonts.googleapis.com/css?family=Amiko" rel="stylesheet">
         <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
         <link rel="stylesheet" href="{% static 'css/app.css' %}">
         {% block stylesheet %}{% endblock %}
@@ -13,7 +14,7 @@
         {% block body %}
             <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
                 <div class="container">
-                    <a class="navbar-brand" href="{% url 'home' %}">Disaster Response</a>
+                    <a class="navbar-brand" href="{% url 'home' %}">राहत</a>
                     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainMenu"
                             aria-controls="mainMenu" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
@@ -37,7 +38,7 @@
                         {% else %}
                             <form class="form-inline ml-auto">
                                 <a href="{% url 'login' %}" class="btn btn-outline-secondary">Log in</a>
-                                <a href="{% url 'signup' %}" class="btn btn-primary ml-2">Sign up</a>
+                                <a href="{% url 'volunteer_signup' %}" class="btn btn-primary ml-2">Sign up</a>
                             </form>
                         {% endif %}
                     </div>
