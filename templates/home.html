@@ -1,54 +1,226 @@
 {% extends 'base.html' %}
+{% load static %}
+{% load leaflet_tags %}
+{% leaflet_css %}
+{% leaflet_js %}
 
-{% block breadcrumb %}
-    <li class="breadcrumb-item active">Volunteers</li>
-{% endblock %}
+{% block stylesheet %}
+    <style>
+    .leaflet-container-default{height: 100%}
+    .legend {
+    line-height: 18px;
+    color: #555;
+        }
+    .legend i {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
+    }
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+		height: 550px;
+      }
+    </style>
+{% endblock stylesheet %}
 
 {% block content %}
-    <table class="table">
-        <thead class="thead-dark">
-            <tr>
-                <th>Citizenship Number</th>
-                <th>First Name</th>
-                <th>Last Name</th>
-                <th>Username</th>
-                <th>Email</th>
-                <th>Enrolled Organization</th>
-                <th>Contact Number</th>
-                <th>Address</th>
-            </tr>
-        </thead>
+    <div class="content">
+        <!-- Animated -->
+        <div class="animated fadeIn"    >
+            <!--  Traffic  -->
+                   <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div id="map">
+                            {% leaflet_map "mymap" callback="window.map_init_basic" %}
+                        </div>
+                        </div>
+                    </div>
+                   <script>
+                            document.getElementById('sidebar').style.display = 'None';
+                             function map_init_basic(map,options) {
+                                map.setView([27.700769, 85.300140], 9);
+                                L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+                                    maxZoom: 18,
+                                    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+                                    '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+                                    'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+                                    id: 'mapbox.streets'
+                                    }).addTo(map);
+                                var operations = JSON.parse('{{ location }}');
+                                var marker = new Array();
+                                var pin = new Array();
+                                var vol = new Array();
+                                var quot = new Array();
+                                var urg = new Array();
+                                var opName = new Array();
+                                var addr = new Array();
+                                var urgName = new Array();
+                                function getcolor(d){
+                                    return d == 5 ? '#800026':
+                                            d == 4 ? '#BD0026':
+                                                d == 3 ? '#E31A1C':
+                                                    d == 2 ? '#FC4E2A':
+                                                        '#FD8D3C';
+                                }
+                                for (var i = 0; i < Object.keys(operations).length; i++){
+                                    var loc = operations[i].location;
+                                    urg.push(operations[i].urgency);
+                                    vol.push(operations[i].volunteer);
+                                    quot.push(operations[i].quota);
+                                    addr.push(operations[i].address);
+                                    opName.push(operations[i].operation);
+                                    urgName.push(operations[i].urgencyName);
+                                    marker.push(L.circle(loc,{
+                                        color : getcolor(urg),
+                                        radius :'1000',
+                                        fillColor:getcolor(urg),
+                                        fillOpacity: 0.35
+                                    }));
+                                    marker[i].addTo(map);
+                                    pin.push(L.marker(loc).addTo(map));
+                                    currentOperation = opName[i].operationName;
+                                    pin[i].bindPopup("<h5>" + opName[i] + "</h5>" + "<h5>Urgency: " + urgName[i]  + "</h5>"+"<center>" +"<a href = {% url 'view_operations' %} >" + "<button type=\"button\" class=\"btn-xs btn-primary mb-1 mt-2\" data-toggle=\"modal\" data-target=\"#smallmodal\"> More Info</button>" + "</a>" ).addTo(map);
+                                }
+                                pin.forEach(function (mar , i) {
+                                   mar.on('click',function () {
+                                       if (document.getElementById('sidebar').style.display == 'none'){
+                                            document.getElementById('sidebar').style.display = 'Block';
+                                       }
+                                       document.getElementById('OperationName').innerHTML = opName[i];
+                                       document.getElementById('Volunteers').innerHTML = vol[i].toString();
+                                       document.getElementById('Quota').innerHTML= quot[i].toString();
+                                       document.getElementById('Urg').innerHTML= urgName[i].toString();
+                                       document.getElementById('OperationLocation').innerHTML = addr[i].toString();
 
-        <tbody>
-            {% if user.is_authenticated %}
-                <tr>
-                    <td class="align-middle">{{ request.user.citizenship_Number }}</td>
-                    <td class="align-middle">{{ request.user.first_name }}</td>
-                    <td class="align-middle">{{ request.user.last_name }}</td>
-                    <td class="align-middle">{{ request.user.username }}</td>
-                    <td class="align-middle">{{ request.user.email }}</td>
-                    <td class="align-middle">{{ request.user.enrolled_Organization }}</td>
-                    <td class="align-middle">{{ request.user.contact_Number }}</td>
-                    <td class="align-middle">{{ request.user.address }}</td>
-                </tr>
-            {% endif %}
-{#            {% for volunteer in volunteers %}#}
-{#                <tr>#}
-{#                    <td class="align-middle">{{ volunteer.citizenship_Number }}</td>#}
-{#                    <td class="align-middle">{{ volunteer.first_name }}</td>#}
-{#                    <td class="align-middle">{{ volunteer.last_name }}</td>#}
-{#                    <td class="align-middle">{{ volunteer.username }}</td>#}
-{#                    <td class="align-middle">{{ volunteer.email }}</td>#}
-{#                    <td class="align-middle">{{ volunteer.enrolled_Organization }}</td>#}
-{#                    <td class="align-middle">{{ volunteer.contact_Number }}</td>#}
-{#                    <td class="align-middle">{{ volunteer.address }}</td>#}
-{#                        <a href="#">{{volunteer.enrolled_Organization}}</a>#}
-{#                        <small class="text-muted d-block">{{volunteer.address}}</small>#}
-{#                    <td class="align-middle">0</td>#}
-{#                    <td class="align-middle">0</td>#}
-{#                    <td></td>#}
-{#                </tr>#}
-{#            {% endfor %}#}
-        </tbody>
-    </table>
-{% endblock %}
+                                   })
+                                });
+                                var legend = L.control({position: 'bottomright'});
+                                legend.onAdd = function (map) {
+                                    var level = [1,2,3,4,5];
+                                    var div = L.DomUtil.create('p');
+                                    for (var i = 0; i<level.length;i++){
+                                        div.innerHTML += '<i style="background:' + getcolor(level[i]) + '"></i> ';
+                                    }
+                                    return div;
+                                };
+                                legend.addTo(map);
+
+
+                             }
+                        </script>
+                <div>
+
+                </div>
+            </div>
+            </div>
+            <!--  /Traffic -->
+            <div class="clearfix"></div>
+            <!-- Orders -->
+            <div class="orders">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="card">
+                            <div class="card-body">
+                                <h4 class="box-title">Relief Operations </h4>
+                            </div>
+                            <div class="card-body--">
+                                <div class="table-stats order-table ov-h">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th class="serial">ID</th>
+                                                <th>Name</th>
+                                                <th>Location</th>
+                                                <th>Volunteers</th>
+                                                <th>Quota</th>
+                                                <th>Status</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="mt-1">
+                                            {% for operation in operations %}
+                                                <tr>
+                                                    <td class="serial">{{ operation.id }}</td>
+                                                    <td>  <span class="name">{{ operation.operationName }}</span> </td>
+                                                    <td> <span class="product">{{ operation.location }}</span> </td>
+                                                    <td><span class="count">{{ operation.volunteersAssigned }}</span></td>
+                                                    <td><span class="product">{{ operation.volunteersInitial }}</span></td>
+                                                    <td>
+                                                        <span class="badge badge-pending">{{ operation.urgencyLevel }}</span>
+                                                    </td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                </div> <!-- /.table-stats -->
+                            </div>
+                        </div> <!-- /.card -->
+                    </div>  <!-- /.col-lg-8 -->
+                <!-- /.col-md-4 -->
+                </div>
+            </div>
+            <!-- /.orders -->
+            <!-- Calender Chart Weather  -->
+
+            <!-- /Calender Chart Weather -->
+            <!-- Modal - Calendar - Add New Event -->
+            <div class="modal fade none-border" id="event-modal">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title"><strong>Add New Event</strong></h4>
+                        </div>
+                        <div class="modal-body"></div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-success save-event waves-effect waves-light">Create event</button>
+                            <button type="button" class="btn btn-danger delete-event waves-effect waves-light" data-dismiss="modal">Delete</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /#event-modal -->
+            <!-- Modal - Calendar - Add Category -->
+            <div class="modal fade none-border" id="add-category">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <h4 class="modal-title"><strong>Add a category </strong></h4>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <label class="control-label">Category Name</label>
+                                        <input class="form-control form-white" placeholder="Enter name" type="text" name="category-name"/>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label class="control-label">Choose Category Color</label>
+                                        <select class="form-control form-white" data-placeholder="Choose a color..." name="category-color">
+                                            <option value="success">Success</option>
+                                            <option value="danger">Danger</option>
+                                            <option value="info">Info</option>
+                                            <option value="pink">Pink</option>
+                                            <option value="primary">Primary</option>
+                                            <option value="warning">Warning</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default waves-effect" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-danger waves-effect waves-light save-category" data-dismiss="modal">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        <!-- /#add-category -->
+    </div>
+{% endblock content %}
+        <!-- .animated -->

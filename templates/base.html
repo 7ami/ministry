@@ -1,61 +1,247 @@
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>{% block title %}राहत{% endblock %}</title>
-{#        <link href="https://fonts.googleapis.com/css?family=Peralta" rel="stylesheet">#}
-        <link href="https://fonts.googleapis.com/css?family=Amiko" rel="stylesheet">
-        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-        <link rel="stylesheet" href="{% static 'css/app.css' %}">
-        {% block stylesheet %}{% endblock %}
-    </head>
-    <body>
-        {% block body %}
-            <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-                <div class="container">
-                    <a class="navbar-brand" href="{% url 'home' %}">राहत</a>
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#mainMenu"
-                            aria-controls="mainMenu" aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="mainMenu">
-                        {% if user.is_authenticated %}
-                            <ul class="navbar-nav ml-auto">
-                                <li class="nav-item dropdown">
-                                    <a class="nav-link dropdown-toggle" href="#" id="userMenu" data-toggle="dropdown"
-                                       aria-haspopup="true" aria-expanded="false">
-                                        {{ user.username }}
-                                    </a>
-                                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="userMenu">
-                                        <a class="dropdown-item" href="#">My Account</a>
-                                        <a class="dropdown-item" href="#">Change Password</a>
-                                        <div class="dropdown-divider"></div>
-                                            <a class="dropdown-item" href="{% url 'logout' %}">Log Out</a>
-                                    </div>
+{% load leaflet_tags %}
+<!doctype html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang=""> <![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8" lang=""> <![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" lang=""> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang=""> <!--<![endif]-->
+<head>
+    {% leaflet_css %}
+    {% leaflet_js %}
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>{% block title %}Raahat{% endblock title %}</title>
+    <meta name="description" content="Sahara - A Disaster Response Webapp">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="apple-touch-icon" href="{% static 'img/logo2.png' %}">
+    <link rel="shortcut icon" href="{% static 'img/logo2.png' %}">
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/normalize.css@8.0.0/normalize.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/lykmapipo/themify-icons@0.1.2/css/themify-icons.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/flag-icon-css/3.2.0/css/flag-icon.min.css">
+    <link rel="stylesheet" href="{% static 'css/cs-skin-elastic.css' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="{% static 'css/pe-icon-7-stroke.css' %}">
+    <!-- <script type="text/javascript" src="https://cdn.jsdelivr.net/html5shiv/3.7.3/html5shiv.min.js"></script> -->
+    <link href="https://cdn.jsdelivr.net/npm/chartist@0.11.0/dist/chartist.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/jqvmap@1.5.1/dist/jqvmap.min.css" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/weathericons@2.1.0/css/weather-icons.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@3.9.0/dist/fullcalendar.min.css" rel="stylesheet" />
+
+
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,600,700,800' rel='stylesheet' type='text/css'>
+    {% block stylesheet %}{% endblock %}
+
+</head>
+
+<body>
+    {% block body %}
+    <aside id="left-panel" class="left-panel">
+        <nav class="navbar navbar-expand-sm navbar-default">
+            <div id="main-menu-hidden" class="main-menu collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li class="active">
+                        <a href="{% url 'home' %}"><i class="menu-icon fa fa-laptop"></i>Home</a>
+                    </li>
+                    <li class="menu-title">Overview</li><!-- /.menu-title -->
+                    <li class="menu-item-has-children dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-cogs"></i>Operations</a>
+                        <ul class="sub-menu children dropdown-menu">
+                            <li><i class="fa fa-file-text"></i><a href="{% url 'create_operations' %}">Create Operations</a></li>
+                            <li><i class="fa fa-spinner"></i><a href="{% url 'view_operations' %}">Ongoing Operations</a></li>
+                            <li><i class="fa fa-file-text"></i><a href="{% url 'enroll_volunteers' %}">Enroll Volunteers</a></li>
+                        </ul>
+                    </li>
+                    <li class="menu-item-has-children dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-globe"></i>Organizations</a>
+                        <ul class="sub-menu children dropdown-menu">
+                            {% for organization in organizations %}
+                                <li><i class="fa fa-plus"></i><a href="{% url 'profile' organization.username %}">
+                                    {{ organization.get_full_name }}</a>
                                 </li>
-                            </ul>
-                        {% else %}
-                            <form class="form-inline ml-auto">
-                                <a href="{% url 'login' %}" class="btn btn-outline-secondary">Log in</a>
-                                <a href="{% url 'volunteer_signup' %}" class="btn btn-primary ml-2">Sign up</a>
+                            {% endfor %}
+                        </ul>
+                    </li>
+                    <li class="menu-item-has-children dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-lightbulb-o"></i>Awareness & Training</a>
+                        <ul class="sub-menu children dropdown-menu">
+                            <li><i class="menu-icon fa fa-briefcase"></i><a href="#">Preparation</a></li>
+                            <li><i class="menu-icon fa fa-ambulance"></i><a href="#">Response</a></li>
+							<li><i class="menu-icon fa fa-medkit"></i><a href="#">First Aid</a></li>
+							<li><i class="menu-icon fa fa-hospital-o"></i><a href="#">Aftermath</a></li>
+							<li><i class="menu-icon fa fa-gear"></i><a href="#">Drills</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="menu-title">Info</li><!-- /.menu-title -->
+
+                    <li class="menu-item-has-children dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-chain"></i>How to Join Us ?</a>
+                        <ul class="sub-menu children dropdown-menu">
+                            <li><i class="menu-icon fa fa-user"></i><a href="{% url 'volunteer_signup' %}">For Volunteers</a></li>
+                            <li><i class="menu-icon fa fa-building-o"></i><a href="{% url 'organization_signup' %}">For Organizations</a></li>
+                        </ul>
+                    </li>
+                    <li class="menu-item-has-children dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-info-circle"></i>About Us</a>
+                        <ul class="sub-menu children dropdown-menu">
+                            <li><i class="menu-icon fa fa-quote-left"></i><a href="#">What is Raahat?</a></li>
+                            <li><i class="menu-icon fa fa-bullseye"></i><a href="#">Our Objectives</a></li>
+                            <li><i class="menu-icon fa fa-pencil-square-o"></i><a href="#">Our Partners</a></li>
+							<li><i class="menu-icon fa fa-sitemap"></i><a href="#">Who are behind this?</a></li>
+							<li><i class="menu-icon fa fa-phone"></i><a href="#">Contact Us</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="menu-item-has-children dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-stack-exchange"></i>Help</a>
+                        <ul class="sub-menu children dropdown-menu">
+                            <li><i class="menu-icon fa fa-question"></i><a href="#">FAQ</a></li>
+                            <li><i class="menu-icon fa fa-h-square"></i><a href="#">Seek Help?</a></li>
+                        </ul>
+                    </li>
+                    <li class="menu-title">Extras</li><!-- /.menu-title -->
+                    <li class="menu-item-has-children dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> <i class="menu-icon fa fa-glass"></i>Pages</a>
+                        <ul class="sub-menu children dropdown-menu">
+
+							<li><i class="menu-icon fa fa-money"></i><a href="#">Donate</a></li>
+							<li><i class="menu-icon fa fa-sign-out"></i><a href="{% url 'logout' %}">Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </nav>
+    </aside>
+    <!-- /#left-panel -->
+    <!-- Right Panel -->
+    <div id="right-panel" class="right-panel">
+        <!-- Header-->
+        <header id="header" class="header" style="padding: 0;">
+            <div class="top-left">
+                <div class="navbar-header">
+                    <a id="menuToggle" class="menutoggle"><i class="fa fa-bars" style="padding: 0;"></i></a>
+                    <a class="navbar-brand" href="{% url 'home' %}" style="padding-left: 0;"><img src="{% static 'img/logo.png' %}" alt="Logo"></a>
+                    <a class="navbar-brand hidden" href="{% url 'home' %}"><img src="{% static 'img/logo2.png' %}" alt="Logo"></a>
+                </div>
+            </div>
+            <div class="top-right">
+                <div class="header-menu">
+                    <div class="header-left">
+                        <button class="search-trigger"><i class="fa fa-search"></i></button>
+                        <div class="form-inline">
+                            <form class="search-form">
+                                <input class="form-control mr-sm-2" type="text" placeholder="Search ..." aria-label="Search">
+                                <button class="search-close" type="submit"><i class="fa fa-close"></i></button>
                             </form>
+                        </div>
+                        {% if user.is_authenticated %}
+                            <div class="user-area dropdown float-right" style="padding-right: 25px">
+                                <a href="#" class="dropdown-toggle active" data-toggle="dropdown" aria-haspopup="true"
+                                   aria-expanded="false">
+                                    <img class="user-avatar rounded-circle" src="{{ request.user.profilePicture.url }}"
+                                         alt="User Avatar">
+                                </a>
+
+                                <div class="user-menu dropdown-menu">
+                                    <a class="nav-link" href="{% url 'profile' request.user.username %}">
+                                        <i class="fa fa- user"></i>My Profile</a>
+
+                                    <a class="nav-link" href="{% url 'update_info' request.user.username %}">
+                                        <i class="fa fa -cog"></i>Edit Profile</a>
+                                    {% if user.profileType != VolunteerUser %}
+                                        <a class="nav-link" href="{% url 'volunteer_organization' request.user.username %}">
+                                            <i class="fa fa- user"></i>View Volunteers</a>
+                                    {% endif %}
+                                    <a class="nav-link" href="{% url 'logout' %}">
+                                        <i class="fa fa-power -off"></i>Logout</a>
+                                </div>
+                            </div>
+                        {% else %}
+                            <span style="padding-right: 15px">
+                                <button type="button" class="btn btn-outline-primary">
+                                    <a href="{% url 'login' %}">Login</a></button>
+                                <button type="button" class="btn btn-outline-success"><a href="{% url 'volunteer_signup' %}">Register</a></button>
+                                <button type="button" class="btn btn-danger"><a href="#" style="color:rgb(255,255,255)"><i class="fa fa-money"></i>&nbsp; Donate</a></button>
+                            </span>
                         {% endif %}
+{#                        </div>#}
                     </div>
                 </div>
-            </nav>
-
-            <div class="container">
-                <ol class="breadcrumb my-4">
-                    {% block breadcrumb %}
-                    {% endblock %}
-                </ol>
-                {% block content %}
-                {% endblock %}
             </div>
-        {% endblock body %}
-        <script src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
-        <script src="{% static 'js/popper.min.js' %}"></script>
-        <script src="{% static 'js/bootstrap.min.js' %}"></script>
-    </body>
+
+        </header>
+
+        <div class="modal fade" id="mediumModal" tabindex="-1" role="dialog" aria-labelledby="mediumModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="mediumModalLabel">{% block modaltitle %}{% endblock modaltitle %}</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            {% block modalcontent %}{% endblock modalcontent %}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button type="button" class="btn btn-primary">Confirm</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        <!-- /#header -->
+        {% block content %}
+        {% endblock content %}
+        <div class="clearfix"></div>
+        <!-- Footer -->
+        <footer class="site-footer">
+            <div class="footer-inner bg-white">
+                <div class="row">
+                    <div class="col-sm-6">
+                        Copyright © 2019
+                    </div>
+                </div>
+            </div>
+        </footer>
+    {% endblock body %}
+        <!-- /.site-footer -->
+{#    </div>#}
+    <!-- /#right-panel -->
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@2.2.4/dist/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.4/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-match-height@0.7.2/dist/jquery.matchHeight.min.js"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+
+    <!--  Chart js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.7.3/dist/Chart.bundle.min.js"></script>
+
+    <!--Chartist Chart-->
+    <script src="https://cdn.jsdelivr.net/npm/chartist@0.11.0/dist/chartist.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartist-plugin-legend@0.6.2/chartist-plugin-legend.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery.flot@0.8.3/jquery.flot.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flot-pie@1.0.0/src/jquery.flot.pie.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flot-spline@0.0.1/js/jquery.flot.spline.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/simpleweather@3.1.0/jquery.simpleWeather.min.js"></script>
+    <script src="{% static 'js/init/weather-init.js' %}"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.9.0/dist/fullcalendar.min.js"></script>
+    <script src="{% static 'js/init/fullcalendar-init.js' %}"></script>
+
+	<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD2jlT6C_to6X1mMvR9yRWeRvpIgTXgddM"></script>
+    {% block script %}{% endblock script %}
+    </div>
+</body>
 </html>

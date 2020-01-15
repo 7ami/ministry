@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container mt-5">
+        <div class="align-content-lg-center">
+            <div class="jumbotron alert alert-danger col-md-8 align-content-lg-center">
+                <div class="row">
+                    <div class="page-header">
+                        <h1><i class="glyphicon glyphicon-exclamation-sign"></i> Access Denied !</h1>
+                    </div>
+                </div>
+                <div class="row mb-3" id="message">
+                    You are not authorized to view this page as {{ user.profileType }}. In order to view this page,
+                    you need to be logged in as {{ profiletype }}
+                </div>
+                <div class="row" id="buttons">
+                        <a href="{% url 'home' %}" class="btn btn-success">Back to Home</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}

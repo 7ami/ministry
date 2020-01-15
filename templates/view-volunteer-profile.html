@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block content %}
+    <div class="content">
+        <div class="animated fadeIn">
+            <div class="row">
+                <div class="col-lg-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <h2 class="box-title">User Profile</h2>
+                            <div class="col-lg-12">
+
+                                <div class="card-body">
+                                <center>
+                                    <div class="mx-auto d-block">
+                                        <img class="justify-align-center rounded-circle mx-auto d-block" src="{{ volunteers.profilePicture.url }}"
+                                             alt="Card image cap" width="140" height="140">
+                                        <h3 class="media-heading">{{ volunteers.get_full_name }}
+                                            <small class="text-muted">{{ volunteers.username }}</small>
+                                        </h3>
+                                        <div class="location text-sm-center mt-2"><i class="fa fa-map-marker"></i> {{ volunteers.address }}</div>
+                                    </div>
+                                    <div class="mt-2">
+                                     <br>
+                                    </div>
+                                    <hr>
+                                    <br>
+                                    </center>
+                                    <h5 class="text-muted"><strong>CONTACT INFO:</strong></h5>
+                                    <br>
+                                    <table class="table">
+                                    <tr>
+                                        <td style="width:300px;"><b>Email</b></td>
+                                        <td>:	{{ volunteers.email }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:300px;"><b>Phone</b></td>
+                                        <td>:	{{ volunteers.contact_Number }}</td>
+                                    </tr>
+        {#                            <tr>#}
+        {#                                <td><b>Address</b></td>#}
+        {#                                <td>:	{{ volunteers.address }}</td>#}
+        {#                            </tr>#}
+                                    </table>
+                                    <hr>
+                                    <h5 class="text-muted"><strong>ABOUT:</strong></h5>
+                                    <br>
+                                    <table class="table">
+                                    <tr>
+                                        <td><b>Citizenship Number</b></td>
+                                        <td>:	{{ volunteers.citizenship_Number }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="width:300px;"><b>Organization Enrolled</b></td>
+                                        <td>:	{{ volunteers.enrolled_Organization.get_full_name }}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td style="width:300px;"><b>Operations Involved</b></td>
+                                        <td>:{% for operations in volunteers.operation.all %}
+                                                {{ operations.operationName }},
+                                              {% endfor %}
+                                        </td>
+                                    </tr>
+                                    </table>
+
+                                    <hr>
+                                    <div class="card-text text-sm-center">
+                                        <a href="#"><i class="fa fa-facebook pr-1"></i></a>
+                                        <a href="#"><i class="fa fa-twitter pr-1"></i></a>
+                                        <a href="#"><i class="fa fa-linkedin pr-1"></i></a>
+                                        <a href="#"><i class="fa fa-pinterest pr-1"></i></a>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

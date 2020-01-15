@@ -1,0 +1,17 @@
+body {
+    /*background-image: url("../img/prism.png");*/
+    background-color: #6c757d;
+}
+
+.logo {
+    font-family: 'Amiko', sans-serif;
+}
+
+.logo a {
+    color: rgba(0, 0, 0, 0.9);
+}
+
+.logo a:hover,
+.logo a:active {
+    text-decoration: none;
+}

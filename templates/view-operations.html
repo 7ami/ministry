@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+{% load leaflet_tags %}
+
+{% load static %}
+
+{% block content %}
+    <style>
+    .leaflet-container-default{
+        height: 100%;
+    }
+    .mapid{height: 250px;}
+    </style>
+    <script>
+        function map_init_basic(map,options) {
+                                map.setView([27.700769, 85.300140], 12);
+                                L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+                                    maxZoom: 18,
+                                    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+                                    '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+                                    'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+                                    id: 'mapbox.streets'
+                                    }).addTo(map);
+                                var operations = JSON.parse('{{ location }}');
+                                var marker = new Array();
+                                var pin = new Array();
+                                var vol = new Array();
+                                var quot = new Array();
+                                var urg = new Array();
+                                var opName = new Array();
+                                var addr = new Array();
+                                var urgName = new Array();
+                                function getcolor(d){
+                                    return d == 5 ? '#800026':
+                                            d == 4 ? '#BD0026':
+                                                d == 3 ? '#E31A1C':
+                                                    d == 2 ? '#FC4E2A':
+                                                        '#FD8D3C';
+                                }
+
+                                for (var i = 0; i < Object.keys(operations).length; i++){
+                                    var loc = operations[i].location;
+                                    urg.push(operations[i].urgency);
+                                    vol.push(operations[i].volunteer);
+                                    quot.push(operations[i].quota);
+                                    addr.push(operations[i].address);
+                                    opName.push(operations[i].operation);
+                                    urgName.push(operations[i].urgencyName);
+                                    marker.push(L.circle(loc,{
+                                        color : getcolor(urg),
+                                        radius :'1000',
+                                        fillColor:getcolor(urg),
+                                        fillOpacity: 0.35
+                                    }));
+                                    marker[i].addTo(map);
+                                    pin.push(L.marker(loc).addTo(map));
+                                    currentOperation = opName[i].operationName;
+                                    pin[i].bindPopup("<h5>" + opName[i] + "</h5>" + "<h5>Urgency: " + urgName[i]  + "</h5>"+"<center>").addTo(map);
+                                }
+                                pin.forEach(function (mar , i) {
+                                   mar.on('click',function () {
+                                       if (document.getElementById('sidebar').style.display == 'none'){
+                                            document.getElementById('sidebar').style.display = 'Block';
+                                       }
+                                       document.getElementById('OperationName').innerHTML = opName[i];
+                                       document.getElementById('Volunteers').innerHTML = vol[i].toString();
+                                       document.getElementById('Quota').innerHTML= quot[i].toString();
+                                       document.getElementById('Urg').innerHTML= urgName[i].toString();
+                                       document.getElementById('OperationLocation').innerHTML = addr[i].toString();
+
+                                   })
+                                });
+                                var legend = L.control({position: 'bottomright'});
+                                legend.onAdd = function (map) {
+                                    var level = [1,2,3,4,5];
+                                    var div = L.DomUtil.create('p');
+                                    for (var i = 0; i<level.length;i++){
+                                        div.innerHTML += '<i style="background:' + getcolor(level[i]) + '"></i> ';
+                                    }
+                                    return div;
+                                };
+                                legend.addTo(map);
+                                L.marker([27.5348213202,85.433675038]).bindPopup('<h5>GodawariLandslide</h5><h5>Urgency:Emergency</h5>').addTo(map);
+                                L.circle([27.5348213202,85.433675038],{color : '#E31A1C',
+                                        radius :'1000',
+                                        fillColor:'##E31A1C',
+                                        fillOpacity: 0.35
+
+                                }).addTo(map);
+
+
+                             }
+    </script>
+
+    <div class="content">
+        <div class="animated fadeIn">
+                <div class="row">
+
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <strong class="card-title">Operation Details</strong>
+                            </div>
+                            <div class="card-body">
+                                    <div clas   s="column-it">
+                                        <h3 class="media-heading">GodawariLandslide</h3><br>
+                                            <table class="table">
+                                                <tbody>
+                                                    <tr>
+                                                        <th>Location</th>
+                                                        <td>Godawari</td>
+                                                    <tr>
+                                                        <th>Latitude</th>
+                                                        <td>27.534821320245698</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Longitude</th>
+                                                        <td>85.43367503843982</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Urgency Level</th>
+                                                        <td><span class="badge badge-danger">Emergency</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Assigned Volunteers</th>
+                                                        <td>13</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Volunteer Quota</th>
+                                                        <td>150</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Organizations Involved</th>
+                                                        <td>
+                                                            Red Cross   SOS
+                                                        </td>
+                                                    </tr>
+    {#                                                <tr>#}
+    {#                                                    <th>Description</th>#}
+    {#                                                    <td>Hydrological station with Bubbler sensor</td>#}
+    {#                                                </tr>#}
+                                                </tbody>
+                                            </table>
+
+                                    </div>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class = "col-md-4">
+                    {% leaflet_map "mymap" callback="window.map_init_basic" %}
+                    </div>
+                </div>
+            </div>
+
+        {% for operation in operations %}
+            <div class="animated fadeIn">
+                <div class="row">
+
+                    <div class="col-md-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <strong class="card-title">Operation Details</strong>
+                            </div>
+                            <div class="card-body">
+                                    <div class="column-it">
+                                        <h3 class="media-heading">{{ operation.operationName }}</h3><br>
+                                            <table class="table">
+                                                <tbody>
+                                                    <tr>
+                                                        <th>Location</th>
+                                                        <td>{{ operation.location }}</td>
+                                                    <tr>
+                                                        <th>Latitude</th>
+                                                        <td>{{ operation.latitude }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Longitude</th>
+                                                        <td>{{ operation.longitude }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Urgency Level</th>
+                                                        <td><span class="badge badge-danger">{{ operation.urgencyLevel }}</span></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Assigned Volunteers</th>
+                                                        <td>{{ operation.volunteersAssigned }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Volunteer Quota</th>
+                                                        <td>{{ operation.volunteersInitial }}</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <th>Organizations Involved</th>
+                                                        <td>
+                                                            {% for organization in operation.organizations.all %}
+                                                                {{ organization.organization_Name }}&nbsp;&nbsp;
+                                                            {% endfor %}
+
+                                                        </td>
+                                                    </tr>
+    {#                                                <tr>#}
+    {#                                                    <th>Description</th>#}
+    {#                                                    <td>Hydrological station with Bubbler sensor</td>#}
+    {#                                                </tr>#}
+                                                </tbody>
+                                            </table>
+
+                                    </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        {% endfor %}<!-- .animated -->
+    </div>
+
+{% endblock content %}

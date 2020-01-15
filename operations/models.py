@@ -1,8 +1,9 @@
 from django.contrib.auth.models import AbstractUser
 from django.contrib import admin
 from django.forms import CheckboxSelectMultiple
+from django.db import models
 
-from accountsapp.models import *
+# from accountsapp.models import AdminUser, VolunteerUser, OrganizationUser
 
 
 class UrgencyLevel(models.Model):
@@ -11,14 +12,6 @@ class UrgencyLevel(models.Model):
 
     def __str__(self):
         return self.urgency
-
-
-# class VolunteerRequired(models.Model):
-#     requiredNumber = models.IntegerField()
-#
-#
-# class VolunteerAssigned(models.Model):
-#     assignedNumber = models.IntegerField()
 
 
 class Task(models.Model):
@@ -33,24 +26,26 @@ class Operation(models.Model):
 
     operationName = models.CharField(max_length=30, unique=True, verbose_name='Operation Name')
     location = models.CharField(max_length=255, unique=True)
-    urgencyLevel = models.ForeignKey(UrgencyLevel, on_delete=models.CASCADE, related_name='+',
+    urgencyLevel = models.ForeignKey(UrgencyLevel, to_field='urgency', on_delete=models.CASCADE, related_name='+',
                                      verbose_name='Urgency Level')
 
     volunteersAssigned = models.IntegerField(verbose_name='Total Volunteers in the area', default=0)
     volunteersInitial = models.IntegerField(verbose_name='Estimated Number of Required Volunteers')
 
     volunteersRequired = models.IntegerField(verbose_name='Currently Required Number', default=0)
+    latitude = models.DecimalField(max_digits=18, decimal_places=15, blank=True, null=True)
+    longitude = models.DecimalField(max_digits=18, decimal_places=15, blank=True, null=True)
 
-    volunteer = models.ManyToManyField(VolunteerUser, related_name='operations', blank=True)
+    # volunteer = models.ManyToManyField(VolunteerUser, related_name='operations', blank=True)
     tasks = models.ManyToManyField(Task, related_name='+')
-    organization = models.ManyToManyField(OrganizationUser, related_name='operations', blank=True)
+    # organization = models.ManyToManyField(OrganizationUser, related_name='operations', blank=True)
 
     def __str__(self):
         return self.operationName
 
     def save(self, *args, **kwargs):
 
-        self. volunteersRequired = self.volunteersInitial - self.volunteersAssigned
+        self.volunteersRequired = self.volunteersInitial - self.volunteersAssigned
         for count in range(1, UrgencyLevel.objects.all().count()+1):
 
             if (self.volunteersAssigned/self.volunteersInitial) <= count*(1/UrgencyLevel.objects.all().count()):
@@ -58,7 +53,6 @@ class Operation(models.Model):
                 break
 
         super().save(*args, **kwargs)
-
 
 
 class Admin(admin.ModelAdmin):

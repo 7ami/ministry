@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'accountsapp.apps.AccountsappConfig',
     'crispy_forms',
     'widget_tweaks',
+    'leaflet',
 ]
 
 MIDDLEWARE = [
@@ -113,6 +114,8 @@ LOGOUT_REDIRECT_URL = 'home'
 
 LOGIN_REDIRECT_URL = 'home'
 
+CREATE_REDIRECT_URL = 'home'
+
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
 
@@ -132,8 +135,19 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
 ]
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'project.raahat0@gmail.com' # Your Email Here
+EMAIL_HOST_PASSWORD = 'raahatrelief' # Your Password Here

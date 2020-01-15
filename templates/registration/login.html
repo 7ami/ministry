@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load crispy_forms_tags %}
+{% load crispy_forms_filters %}
+
+{% block stylesheet %}
+    <link rel="stylesheet" href="{% static 'css/previous/accounts.css' %}">
+{% endblock stylesheet %}
+
+{% block body %}
+    <div class="row justify-content-center mt-5">
+        <div class="col-lg-4 col-md-6 col-sm-8">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title mb-4">Login</h3>
+                    <form method="post" novalidate enctype="multipart/form-data">
+                        {%  csrf_token %}
+                        {{ form|crispy }}
+                        <div class="peer mt-4 justify-content-center">
+                            <button type="submit" class="btn btn-success">Login</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card-footer text-muted text-center">
+                    Want to Volunteer?<a href="{% url 'volunteer_signup' %}"> Sign Up</a>
+                </div>
+            </div>
+            <div class="text-center py-2">
+                <small>
+                    <a href="#" class="text-muted">Forgot Password?</a>
+                </small>
+            </div>
+        </div>
+    </div>
+{% endblock body %}

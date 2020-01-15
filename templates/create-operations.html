@@ -1,25 +1,66 @@
-{% extends 'base_accounts.html' %}
+{% extends 'base.html' %}
+{% load leaflet_tags %}
+{% leaflet_css %}
+{% leaflet_js %}
 {% load crispy_forms_tags %}
+{% load crispy_forms_filters %}
 
-{% block title %}Raahat - Register{% endblock %}
-
+{% block title %}Raahat - Create{% endblock %}
+<style>
+    #map{height:1000px;}
+</style>
 {% block content %}
-    <div class="row justify-content-center">
-        <div class="col-lg-8 col-md-10 col-sm-12">
-            <div class="card">
-                <div class="card-body">
-                    <h3 class="card-title">Create Relief-Operation</h3>
-                    <form method="post" novalidate>
-                        {% csrf_token %}
-                        {% crispy form %}
-{#                        {% include 'includes/forms.html' %}#}
-{#                        <button type="submit" class="btn btn-primary">Create</button>#}
-                    </form>
-                </div>
-{#                <div class="card-footer text-muted text-center">#}
-{#                    Already have an account? <a href="{% url 'login' %}">Log in</a>#}
-{#                </div>#}
-            </div>
+    <div class="content">
+        <div class="row">
+            <div class="col-lg-6 ">
+                <div class="card">
+                    <div class="card-body">
+                        <h1 class="box-title">Create Relief Operations </h1>
+                    </div>
+                    <div class="card-body">
+                        <form method="post" novalidate enctype="multipart/form-data">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+    {#                        {% include 'includes/forms.html' %}#}
+                            <button type="submit" class="btn btn-success">Create</button>
+                        </form>
+                    </div>
+                </div> <!-- /.card -->
+            </div>  <!-- /.col-lg-8 -->
+                    <div class="col-lg-6">
+                        <div class="card">
+                            <div class="card-body">
+                                <div id = 'map'>
+                                     {% leaflet_map "mymap" callback="window.map_init_basic" %}
+                                    <script>
+                                        function map_init_basic(map,options) {
+                                            map.setView([27.700769, 85.300140], 9);
+                                            L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw', {
+                                    maxZoom: 18,
+                                    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+                                    '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+                                    'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+                                    id: 'mapbox.streets'
+                                    }).addTo(map);
+                                            function onMapClick(e){
+                                                var temp = e.latlng;
+                                                var lat = temp.lat;
+                                                var lon = temp.lng;
+                                                document.getElementById('id_latitude').value = lat;
+                                                document.getElementById('id_longitude').value = lon;
+                                                console.log(lat);
+                                            }
+                                            map.on('click',onMapClick);
+                                        }
+                                    </script>
+                                </div>
+                            </div>
+                        </div><!-- /.card -->
+
+
+
+
+            </div> <!-- /.col-md-4 -->
         </div>
     </div>
 {% endblock %}

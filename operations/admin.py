@@ -1,5 +1,6 @@
 from django.contrib import admin
-from .models import VolunteerUser, OrganizationUser, UrgencyLevel, Operation, Task, Admin
+from operations.models import UrgencyLevel, Operation, Task, Admin
+from accountsapp.models import VolunteerUser, OrganizationUser
 
 
 admin.site.register(VolunteerUser)
