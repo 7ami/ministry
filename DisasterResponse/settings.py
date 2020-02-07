@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'crispy_forms',
     'widget_tweaks',
     'leaflet',
+    'import_export'
 ]
 
 MIDDLEWARE = [
@@ -80,8 +81,12 @@ WSGI_APPLICATION = 'DisasterResponse.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'ministrydb',
+        'USER': 'postgres',
+        'PASSWORD': 'newpassword1234',
+        'HOST': 'localhost',
+        'PORT': '5432'
     }
 }
 
@@ -149,5 +154,5 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
-EMAIL_HOST_USER = 'project.raahat0@gmail.com' # Your Email Here
-EMAIL_HOST_PASSWORD = 'raahatrelief' # Your Password Here
+EMAIL_HOST_USER = 'project.raahat0@gmail.com'  # Your Email Here
+EMAIL_HOST_PASSWORD = 'raahatrelief'  # Your Password Here
